@@ -12,6 +12,7 @@ API методы<br>
 Что сделано:
 
 Реализован рабочий REST API<br>
+Методы проверялись в postman<br>
 Метод создания заказа<br>
 POST http://localhost/api/orders/create.php<br>
 Метод получения информации о заказе<br>
