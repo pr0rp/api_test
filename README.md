@@ -19,3 +19,6 @@ POST http://localhost/api/orders/create.php<br>
 GET http://localhost/api/orders/read.php<br>
 Метод получение списка заказов<br>
 GET http://localhost/api/orders/read.php?id=1<br>
+Так же были добавлены методы обновления и удаления<br>
+PUT http://localhost/api/orders/update.php?id=1<br>
+DELETE http://localhost/api/orders/delete.php?id=1<br>
