@@ -2,7 +2,7 @@
 
     require '../inc/dbcon.php';
 
-    function error422($message){
+function error422($message){
 
         $data = [
             'status' => 422,
@@ -11,14 +11,14 @@
         header("HTTP/1.0 422 Unprocessable Entity");
         echo json_encode($data);
         exit();
-    }
+}
 
 /*Метод Post создание нового заказа
 *в postman 
 *http://localhost/api/orders/create.php
 */
 
-    function storeOrders($ordersInput){
+function storeOrders($ordersInput){
         global $conn;
         $item = mysqli_real_escape_string($conn, $ordersInput['item']);
         $firstaddress = mysqli_real_escape_string($conn, $ordersInput['first_address']);
@@ -55,9 +55,9 @@
                 header("http/1.0 500 internal server error");
                 return json_encode($data);
             }
-        }
-   
     }
+   
+}
 
 /*Метод Get выводит список всех записей
 *в postman 
@@ -146,6 +146,89 @@ function getOrders($ordersParams){
             'message' => 'internal server error',
         ];
         header("http/1.0 500 internal server error");
+        return json_encode($data);
+    }
+
+}
+
+function updateOrders($ordersInput, $ordersParams){
+    
+    global $conn;
+
+    if(!isset($ordersParams['id'])){
+        return error422('order id not founded');
+    }elseif($ordersParams['id'] == null){
+        return error422('enter the order id');
+    }
+
+    $orderId = mysqli_real_escape_string($conn, $ordersParams['id']);
+
+    $item = mysqli_real_escape_string($conn, $ordersInput['item']);
+    $firstaddress = mysqli_real_escape_string($conn, $ordersInput['first_address']);
+    $lastaddres = mysqli_real_escape_string($conn, $ordersInput['last_addres']);
+    $time = mysqli_real_escape_string($conn, $ordersInput['time']);
+    
+    if(empty(trim($item))){
+        return error422('Enter item');
+    }elseif(empty(trim($firstaddress))){
+        return error422('Enter firstaddress');
+    }elseif(empty(trim($lastaddres))){
+        return error422('Enter lastaddres');
+    }elseif(empty(trim($time))){
+        return error422('Enter time');
+    }
+    else
+    {
+        $query = "UPDATE orders SET item='$item',first_address='$firstaddress',last_addres='$lastaddres',time='$time' WHERE id='$orderId' LIMIT 1";
+        $result = mysqli_query($conn,  $query);
+
+        if($result){
+            $data = [
+                'status' => 200,
+                'message' => 'Order Updated Succesfully',
+            ];
+            header("http/1.0 200 Created");
+            return json_encode($data);
+        }
+        else{
+            $data = [
+                'status' => 500,
+                'message' => 'internal server error',
+            ];
+            header("http/1.0 500 internal server error");
+            return json_encode($data);
+        }
+}
+}
+
+function deleteOrders($ordersParams){
+    global $conn;
+
+    if(!isset($ordersParams['id'])){
+        return error422('order id not founded');
+    }elseif($ordersParams['id'] == null){
+        return error422('enter the order id');
+    }
+
+    $orderId = mysqli_real_escape_string($conn, $ordersParams['id']);
+
+    $query = "DELETE FROM orders WHERE id='$orderId' LIMIT 1";
+    $result = mysqli_query($conn, $query);
+
+    if($result){
+        $data = [
+            'status' => 200,
+            'message' => 'order deleted successfully',
+        ];
+        header("http/1.0 200 OK");
+        return json_encode($data);
+    }
+    else{
+        $data = [
+            'status' => 404,
+            'message' => 'order not founded',
+        ];
+        header("http/1.0 404 not found");
         return json_encode($data);
     }
 
